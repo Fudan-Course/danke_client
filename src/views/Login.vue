@@ -66,7 +66,7 @@
     methods:{
       login(){
         var that = this
-        const path = 'http://127.0.0.1:8000/api/v1/login'
+        const path = 'http://127.0.0.1:8000/api/v1/auth/login'
         axios.post(path, {
           username_or_email: that.username,
           password: that.password
@@ -117,7 +117,7 @@
       },
       register(){
         var that = this
-        const path = 'http://127.0.0.1:8000/api/v1/register'
+        const path = 'http://127.0.0.1:8000/api/v1/auth/register'
         axios.post(path, {
           username: that.newNickname,
           email: that.newUsername,
