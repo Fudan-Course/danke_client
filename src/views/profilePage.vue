@@ -66,23 +66,52 @@
 </template>
 
 <script>
+import {setCookie, getCookie, delCookie} from '../assets/js/cookie.js'
+import axios from 'axios';
 export default {
   name: 'ProfilePage',
   props: {
     msg: String
   },
+  mounted(){
+    let uid = getCookie(cname='user_id')
+    if(uid == ""){
+      this.$router.push('/')
+    }else{
+      let that = this
+      let path = 'http://127.0.0.1:8000/api/v1/users/' + uid + '/profile'
+      axios.get(path, {
+        
+      })
+        .then(function (response) {
+          that.username = response.data.username
+          that.nickname = response.data.nickname
+          that.email = response.data.email
+          that.intro = response.data.description
+        })
+        .catch(function (error) {
+          console.log(error)
+        })
+        .finally(function (){
+
+        })
+    }
+  },
   methods: {
       handleCommand: function(command) {
         if(command == "changeProfile"){
           this.$message('跳转到个人资料页');
+
+          // =================应该是跳转到“主页”吧？
           // TODO:
           // 做好后删掉弹窗
         }
         else if(command == "logout"){
           this.login = false;
           this.$message('退出登录');
-          // TODO:
+          // TODO: DONE
           // 做好后删掉弹窗
+          delCookie()
         }
         else{
           this.$message('什么事都没有发生');
@@ -92,8 +121,11 @@ export default {
       loginAc: function(){
         this.login = true;
         this.$message('登录');
-        // TODO:
+        // TODO: DONE
         // 做好后删掉弹窗
+        setTimeout(function(){
+          this.$router.push('/')
+        }, 500)
       },
       change: function(){
         this.nicknameBackup = this.nickname;
@@ -103,10 +135,37 @@ export default {
         this.disableChange = false;
       },
       submitChange: function(){
-        this.$message('提交修改到后端');
-        this.disableChange = true;
-        // TODO:
+        // this.$message('提交修改到后端');
+        // this.disableChange = true;
+        // TODO: DONE
         // 做好后删掉弹窗
+        let uid = getCookie(cname='user_id')
+        let session_id = getCookie()
+        let that = this
+        let path = 'http://127.0.0.1:8000/api/v1/users/' + uid + '/profile'
+        axios.put(path, {
+          session_id: session_id
+        })
+          .then(function (response){
+            let respcode = response.data.err_code
+            let resphint = response.data.message
+            if(respcode == 0){
+              that.nicknameBackup = that.nickname
+              that.usernameBackup = that.username
+              that.emailBackup = that.email
+              that.introBackup = that.intro
+            }else{
+              
+            }
+            that.$message(resphint)
+            that.disableChange = true
+          })
+          .catch(function (error){
+            console.log(error)
+          })
+          .finally(function (){
+
+          })
       },
       discardChange: function(){
         this.nickname = this.nicknameBackup;
@@ -129,6 +188,7 @@ export default {
       email: "GromahIsLovedByEveryone@fudan.edu.cn",
       intro: "我是高大爷，我是最强的！",
       // 仅用于伪交互功能，实现交互后请删除
+      // - 没关系，挂载的时候可以把它覆盖掉，留着当彩蛋吧hhh
       nicknameBackup: "",
       usernameBackup: "",
       emailBackup: "",
