@@ -1,8 +1,10 @@
 # Client of Danke
 
 ## Setup
-```npm install
+```
+npm install
 ```
 ## Start Client
-```npm run dev
+```
+npm run dev
 ```
