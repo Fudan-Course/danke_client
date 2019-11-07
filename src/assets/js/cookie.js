@@ -1,14 +1,14 @@
 /*用export把方法暴露出来*/
 /*设置cookie*/
-export function setCookie(c_name,value,expire) {
+export function setCookie(c_name, value, session_id, expire) {
   var date=new Date()
   date.setSeconds(date.getSeconds()+expire)
-  document.cookie=c_name+ "="+escape(value)+"; expires="+date.toGMTString()
+  document.cookie = c_name + "=" + escape(value) + "; session_id=" + session_id + "; expires=" + date.toGMTString()
   console.log(document.cookie)
 }
 
 /*获取cookie*/
-export function getCookie(c_name){
+export function getCookie(c_name="session_id"){
   if (document.cookie.length>0){
     let c_start=document.cookie.indexOf(c_name + "=")
     if (c_start!=-1){
@@ -20,6 +20,7 @@ export function getCookie(c_name){
   }
   return ""
 }
+
 
 /*删除cookie*/
 export function delCookie(c_name){

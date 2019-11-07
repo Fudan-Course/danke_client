@@ -55,12 +55,12 @@
       }
     },
     mounted(){
-      // TODO cookie - front or back end ?
-      if(getCookie('username')){
+      if(getCookie()){
         // if(getCookie('username')== 'admin')
         //   this.$router.push('/admin_page')
         // else
         //   this.$router.push('/personal_page')
+        this.$router.push('/MainPage')
       }
     },
     methods:{
@@ -75,11 +75,12 @@
             console.log(response)
             let respcode = response.data.err_code
             let resphint = response.data.message
+            let respsession = response.data.session_id
 
             that.tishi = resphint
             if(respcode == 0){
               that.showTishi = true
-              setCookie('username',that.username,1000*60)
+              setCookie('user_id', response.data.user_id, respsession ,1000*60)
               setTimeout(function(){
                 that.$router.push('/mainPage') // Router to main page
               }.bind(that),1000)
