@@ -6,8 +6,20 @@
         <el-col :span="3">
           <el-image style="width:60px;height:60px" :src="logourl"></el-image>
         </el-col>
-        <el-col :span="6" :offset="15">
-          <el-button type="primary" round="true">登录</el-button>
+        <el-col :span="9" :offset="12" v-if="login" class="profile">
+          欢迎，{{ username }}。
+          <el-dropdown  @command="handleCommand">
+            <span class="el-dropdown-link">
+              选项<i class="el-icon-arrow-down el-icon--right"></i>
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item command="changeProfile">个人资料</el-dropdown-item>
+              <el-dropdown-item command="logout">退出登录</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </el-col>
+        <el-col :span="6" :offset="15" v-else>
+          <el-button type="primary" round="true" @click.native="loginAc">登录</el-button>
         </el-col>
       </el-row>
     </el-header>
@@ -104,12 +116,39 @@ export default {
   props: {
     msg: String
   },
+  methods: {
+    handleCommand: function(command) {
+      if(command == "changeProfile"){
+        this.$message('跳转到个人资料页');
+        // TODO
+        // 做好后删掉弹窗
+      }
+      else if(command == "logout"){
+        this.login = false;
+        this.$message('退出登录');
+        // TODO
+        // 做好后删掉弹窗
+      }
+      else{
+        this.$message('什么事都没有发生');
+        // 为之后的功能做准备
+      }
+    },
+    loginAc: function(){
+      this.login = true;
+      this.$message('登录');
+      // TODO
+      // 做好后删掉弹窗
+    }
+  },
   data(){
     return {
       logourl: require("../assets/Danke_logo.png"),
       departments: [{name: '计算机', subblock: ['子版块A', '子版块B', '子版块C'], replyer: 'Gromah', time: '114514秒前'},
       {name: '另一个院系', subblock: ['子版块A', '子版块B'], replyer: 'Gromah', time: '114514秒前'},
-      {name: '第三个院系', subblock: ['子版块A', '子版块B', '子版块C'], replyer: 'Gromah', time: '114514秒前'}]
+      {name: '第三个院系', subblock: ['子版块A', '子版块B', '子版块C'], replyer: 'Gromah', time: '114514秒前'}],
+      username: 'Gromah',
+      login: false,
     }
   }
 }
