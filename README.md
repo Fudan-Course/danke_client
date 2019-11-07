@@ -2,6 +2,7 @@
 
 ## Setup
 ```npm install
-
+```
 ## Start Client
 ```npm run dev
+```
