@@ -33,14 +33,13 @@
               <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
               <el-breadcrumb-item>{{ area }}</el-breadcrumb-item>
               <el-breadcrumb-item>{{ dept }}</el-breadcrumb-item>
-              <el-breadcrumb-item>{{ sub }}</el-breadcrumb-item>
             </el-breadcrumb>
           </el-col>
         </el-row>
 
         <el-row>
           <el-col :span="3" :offset="3" class="title">
-            子版块一
+            计算机学院
           </el-col>
         </el-row>
 
@@ -50,13 +49,7 @@
           </el-col>
         </el-row>
 
-        <el-row>
-          <el-col :span="3" :offset="1" class="subsubtitle">
-            置顶帖
-          </el-col>
-        </el-row>
-
-        <div v-for="department in zhiding">
+        <div v-for="department in subblock">
           <el-row>
             <el-card class="block">
               <el-row type="flex" align="middle">
@@ -67,63 +60,6 @@
                   </el-row>
                   <el-row class="subsubtitle" style="text-align:left;">
                     {{ department.subname }}
-                  </el-row>
-                  <el-row class="num" style="text-align:left;">
-                    发帖人：{{ department.lz }}，回复数：{{ department.repnum }}，浏览数：{{ department.watchnum }}
-                  </el-row>
-                </el-col>
-                <el-col :span="8">
-                  <el-row type="flex" align="middle" class="newestreply">
-                    {{ department.dongtai }}
-                  </el-row>
-                  <el-row type="flex" align="middle" class="replymsg">
-                    摘要：{{ department.abstract }}
-                  </el-row>
-                  <el-row type="flex" align="middle" class="replymsg">
-                    回复者：{{ department.replyer }}
-                  </el-row>
-                  <el-row type="flex" align="middle" class="replymsg">
-                    回复时间：{{ department.time }}
-                  </el-row>
-                </el-col>
-              </el-row>
-            </el-card>
-          </el-row>
-        </div>
-
-        <!-- 同样也没做排序回复事件和方法 -->
-        <el-row>
-          <el-col :span="12" :offset="3" class="subtitle">
-            <el-button type="text">最新回复</el-button>
-            <el-divider direction="vertical"></el-divider>
-            <el-button type="text">最多回复</el-button>
-            <el-divider direction="vertical"></el-divider>
-            <el-button type="text">最多点赞</el-button>
-          </el-col>
-          <el-col :span="9" class="subtitle">
-            <el-popover placement="bottom" width="500">
-              <el-input type="textarea" :rows="5" placeholder="请输入内容" v-model="mainreply"></el-input>
-              <!-- 未绑定回复事件 -->
-              <el-button type="info" size="mini" class="replybtn">发布帖子</el-button>
-              <el-button type="text" slot="reference">发布帖子</el-button>
-            </el-popover>
-          </el-col>
-        </el-row>
-
-        <div v-for="department in tiezi">
-          <el-row>
-            <el-card class="block">
-              <el-row type="flex" align="middle">
-                <el-col :span="16">
-                  <el-row style="text-align:left;">
-                    <!-- 改成了文字链接跳转，在href处输入链接 -->
-                    <el-link :underline="false" href="这里是链接" class="subtitle">{{ department.name }}</el-link>
-                  </el-row>
-                  <el-row class="subsubtitle" style="text-align:left;">
-                    {{ department.subname }}
-                  </el-row>
-                  <el-row class="num" style="text-align:left;">
-                    发帖人：{{ department.lz }}，回复数：{{ department.repnum }}，浏览数：{{ department.watchnum }}，
                   </el-row>
                 </el-col>
                 <el-col :span="8">
@@ -153,7 +89,7 @@
 
 <script>
 export default {
-  name: 'TiePage',
+  name: 'BlockPage',
   methods: {
     handleCommand: function(command) {
       if(command == "changeProfile"){
@@ -189,14 +125,9 @@ export default {
       login: true,
       area: '课程评价',
       dept: '计算机系',
-      sub: '子板块一',
-      mainreply: '',
-      zhiding: [{name: '置顶一', subname: '摘要', lz: 'Gromah', repnum: 0, watchnum: 0, dongtai: '新回复：XXXXX', abstract: '高大爷天下第一', replyer: 'Gromah', time: '114514秒前'},
-      {name: '置顶二', subname: '摘要', lz: 'Gromah', repnum: 0, watchnum: 0, dongtai: '新回复：XXXXX', abstract: '高大爷天下第一', replyer: 'Gromah', time: '114514秒前'},
-      {name: '置顶三', subname: '摘要', lz: 'Gromah', repnum: 0, watchnum: 0, dongtai: '新回复：XXXXX', abstract: '高大爷天下第一', replyer: 'Gromah', time: '114514秒前'}],
-      tiezi: [{name: '帖子一', subname: '摘要', lz: 'Gromah', repnum: 0, watchnum: 0, dongtai: '新回复：XXXXX', abstract: '高大爷天下第一', replyer: 'Gromah', time: '114514秒前'},
-      {name: '帖子二', subname: '摘要', lz: 'Gromah', repnum: 0, watchnum: 0, dongtai: '新回复：XXXXX', abstract: '高大爷天下第一', replyer: 'Gromah', time: '114514秒前'},
-      {name: '帖子三', subname: '摘要', lz: 'Gromah', repnum: 0, watchnum: 0, dongtai: '新回复：XXXXX', abstract: '高大爷天下第一', replyer: 'Gromah', time: '114514秒前'}]
+      subblock: [{name: '子板块一', subname: '副标题', dongtai: '新帖：XXXXX', abstract: '高大爷天下第一', replyer: 'Gromah', time: '114514秒前'},
+      {name: '子板块二', subname: '副标题', dongtai: '新帖：XXXXX', abstract: '高大爷天下第一', replyer: 'Gromah', time: '114514秒前'},
+      {name: '子版块三', subname: '副标题', dongtai: '新帖：XXXXX', abstract: '高大爷天下第一', replyer: 'Gromah', time: '114514秒前'}]
     }
   }
 }
@@ -240,10 +171,6 @@ export default {
   .subsubtitle{
     color: #104E8B;
     font-size: 15px;
-    margin-top: 5px;
-  }
-  .num{
-    font-size: 12px;
   }
   .tietitle{
     color: #000000;
@@ -255,8 +182,5 @@ export default {
   }
   .replymsg{
     font-size: 10px;
-  }
-  .replybtn{
-    margin-top: 5px;
   }
 </style>

@@ -36,19 +36,21 @@
           <el-row>
             <el-card class="block">
               <el-row type="flex" align="middle">
-                <el-col :span="20">
-                  <el-col :span="4" class="subtitle">
-                      {{ department.name }}
-                  </el-col>
-                  <div v-for="block in department.subblock">
-                    <el-col :span="3">
-                      <el-button type="text" class="subblock">{{ block }}</el-button>
-                    </el-col>
-                  </div>
+                <el-col :span="16">
+                  <el-row style="text-align:left;">
+                    <!-- 改成了文字链接跳转，在href处输入链接 -->
+                    <el-link :underline="false" href="这里是链接" class="subtitle">{{ department.name }}</el-link>
+                  </el-row>
+                  <el-row class="subsubtitle" style="text-align:left;">
+                    {{ department.subname }}
+                  </el-row>
                 </el-col>
-                <el-col :span="3">
+                <el-col :span="8">
                   <el-row type="flex" align="middle" class="newestreply">
-                    最新回复
+                    {{ department.dongtai }}
+                  </el-row>
+                  <el-row type="flex" align="middle" class="replymsg">
+                    摘要：{{ department.abstract }}
                   </el-row>
                   <el-row type="flex" align="middle" class="replymsg">
                     回复者：{{ department.replyer }}
@@ -78,19 +80,26 @@
           <el-row>
             <el-card class="block">
               <el-row type="flex" align="middle">
-                <el-col :span="20">
-                  <el-col :span="4" class="subtitle">
-                      {{ department.name }}
-                  </el-col>
-                  <div v-for="block in department.subblock">
-                    <el-col :span="3">
-                      <el-button type="text" class="subblock">{{ block }}</el-button>
+                <el-col :span="16">
+                  <el-row style="text-align:left;">
+                    <!-- 改成了文字链接跳转，在href处输入链接 -->
+                    <el-link :underline="false" href="这里是链接" class="subtitle">{{ department.name }}</el-link>
+                  </el-row>
+                  <el-row class="subsubtitle" style="text-align:left;">
+                    {{ department.subname }}
+                  </el-row>
+                  <el-row style="text-align:left;">
+                    <el-col :span="4" v-for="block in department.subblock">
+                      <el-link :underline="false" href="这里是链接" class="subblock">{{ block }}</el-link>
                     </el-col>
-                  </div>
+                  </el-row>
                 </el-col>
-                <el-col :span="3">
+                <el-col :span="8">
                   <el-row type="flex" align="middle" class="newestreply">
-                    最新回复
+                    {{ department.dongtai }}
+                  </el-row>
+                  <el-row type="flex" align="middle" class="replymsg">
+                    摘要：{{ department.abstract }}
                   </el-row>
                   <el-row type="flex" align="middle" class="replymsg">
                     回复者：{{ department.replyer }}
@@ -120,13 +129,13 @@ export default {
     handleCommand: function(command) {
       if(command == "changeProfile"){
         this.$message('跳转到个人资料页');
-        // TODO
-        // 做好后删掉弹窗
+        // TODO:
+          // 做好后删掉弹窗
       }
       else if(command == "logout"){
         this.login = false;
         this.$message('退出登录');
-        // TODO
+        // TODO:
         // 做好后删掉弹窗
       }
       else{
@@ -137,18 +146,18 @@ export default {
     loginAc: function(){
       this.login = true;
       this.$message('登录');
-      // TODO
+      // TODO:
       // 做好后删掉弹窗
-    }
+    },
   },
   data(){
     return {
       logourl: require("../assets/Danke_logo.png"),
-      departments: [{name: '计算机', subblock: ['子版块A', '子版块B', '子版块C'], replyer: 'Gromah', time: '114514秒前'},
-      {name: '另一个院系', subblock: ['子版块A', '子版块B'], replyer: 'Gromah', time: '114514秒前'},
-      {name: '第三个院系', subblock: ['子版块A', '子版块B', '子版块C'], replyer: 'Gromah', time: '114514秒前'}],
       username: 'Gromah',
-      login: false,
+      login: true,
+      departments: [{name: '计算机', subname: '副标题', dongtai: '新帖：XXXXX', abstract: '高大爷天下第一', subblock: ['子版块A', '子版块B', '子版块C'], replyer: 'Gromah', time: '114514秒前'},
+      {name: '另一个院系', subname: '副标题', dongtai: '新帖：XXXXX', abstract: '高大爷天下第一', subblock: ['子版块A', '子版块B'], replyer: 'Gromah', time: '114514秒前'},
+      {name: '第三个院系', subname: '副标题', dongtai: '新帖：XXXXX', abstract: '高大爷天下第一', subblock: ['子版块A', '子版块B', '子版块C'], replyer: 'Gromah', time: '114514秒前'}]
     }
   }
 }
@@ -176,9 +185,13 @@ export default {
     font-size: 30px;
   }
   .subtitle{
-    color: #000000;
+    color: #104E8B;
     font-weight: bold;
     font-size: 20px;
+  }
+  .subsubtitle{
+    color: #104E8B;
+    font-size: 15px;
   }
   .subblock{
     color: #FFFFFF;

@@ -81,7 +81,7 @@ export default {
       let that = this
       let path = 'http://127.0.0.1:8000/api/v1/users/' + uid + '/profile'
       axios.get(path, {
-        
+
       })
         .then(function (response) {
           that.username = response.data.username
@@ -155,7 +155,7 @@ export default {
               that.emailBackup = that.email
               that.introBackup = that.intro
             }else{
-              
+
             }
             that.$message(resphint)
             that.disableChange = true
