@@ -131,7 +131,7 @@ export default {
       newPasswordConfirm: "",
       newNickname: "",
       verified_code: "",
-      dialogFormVisible: true,
+      dialogFormVisible: false,
       showVerifyResult: false,
       verify_result: ""
     };
