@@ -87,15 +87,15 @@
         </el-col>
       </el-row>
 
-      <div v-for="reply in replies">
+      <div v-for="reply in replies" :key="reply">
         <el-card class="tiezi">
           <el-row>
             <el-col :span="3">
               <el-row>
-                <el-avatar :size="50" :src="reply.logo"></el-avatar>
+                <el-avatar :size="50" :src="reply.user.avatar"></el-avatar>
               </el-row>
               <el-row class="nickname">
-                {{ reply.nickname }}
+                {{ reply.user.nickname }}
               </el-row>
             </el-col>
             <el-col :span="20">
@@ -104,11 +104,12 @@
               </el-row>
               <!-- 同样也没做赞踩回复事件和方法 -->
               <el-row class="time" style="height:20px;">
-                <el-col :span="1">
+                <!-- 删除楼层数显示 -->
+                <!-- <el-col :span="1">
                   <el-button type="text" disabled>{{ reply.num }}楼</el-button>
-                </el-col>
+                </el-col> -->
                 <el-col :span="2">
-                  <el-button type="text" disabled>{{ reply.time }}</el-button>
+                  <el-button type="text" disabled>{{ reply.post_time }}</el-button>
                 </el-col>
                 <el-col :span="2">
                   <el-button type="text">赞</el-button>
@@ -127,22 +128,24 @@
                 </el-col>
               </el-row>
               <el-divider>回复</el-divider>
-              <el-row class="cmt" style="height:50px;" v-for="cmt in reply.reply">
+              <el-row class="cmt" style="height:50px;" v-for="cmt in reply.comments" :key="cmt">
                 <el-col :span="1">
                     <el-avatar :size="30" :src="cmt.logo"></el-avatar>
                 </el-col>
                 <el-col :span="23">
                     <el-row>
-                      {{ cmt.nickname }} : {{ cmt.content }}
+                      {{ cmt.user.nickname }} : {{ cmt.content }}
                     </el-row>
                     <!-- 同样也没做赞踩回复事件和方法 -->
                     <el-row>
-                      <el-col :span="2">
+                      <!-- 注释: reply.time???? -->
+                      <!-- <el-col :span="2">
                         <el-button type="text" disabled size="small">{{ reply.time }}</el-button>
-                      </el-col>
+                      </el-col> -->
                       <el-col :span="2">
                         <el-button type="text" size="small">赞</el-button>
-                        <el-button type="text" disabled size="small">{{ reply.good }}</el-button>
+                        <!-- TODO: 点赞还没做 -->
+                        <!-- <el-button type="text" disabled size="small">{{ reply.good }}</el-button> -->
                       </el-col>
                       <el-col :span="1">
                         <el-button type="text" size="small">踩</el-button>
@@ -172,8 +175,55 @@
 </template>
 
 <script>
+import { setCookie, getCookie, delCookie } from "../assets/js/cookie.js";
+import axios from 'axios';
 export default {
   name: 'TieZi',
+  data(){
+    return {
+      logourl: require("../assets/Danke_logo.png"),
+      username: 'Gromah',
+      login: true,
+      // mainblock: '计算机科学技术学院',
+      // subblock: '子版块',
+      tietitle: '这是帖子题目',
+      lzname: '无敌高大爷',
+      lzcontent: 'We love Gromah!We love Gromah!We love Gromah!We love Gromah!We love Gromah!We love Gromah!We love Gromah!We love Gromah!We love Gromah!We love Gromah!We love Gromah!We love Gromah!We love Gromah!We love Gromah!We love Gromah!We love Gromah!We love Gromah!We love Gromah!We love Gromah!We love Gromah!We love Gromah!We love Gromah!We love Gromah!We love Gromah!We love Gromah!We love Gromah!',
+      lztime: '114514秒前',
+      area: '课程评价',
+      dept: '计算机系',
+      sub: '子板块一',
+      replynum: 4,
+      // TODO: good点赞没有做
+      replies: [{user:{avatar: require("../assets/Danke_logo.png"), nickname: 'Gromah'}, content: '高大爷太强了', post_time: '114514秒前', good: 114514, comments: [{user: {nickname: '迷弟', avatar: require("../assets/Danke_logo.png")}, content: '高大爷太强了'}, {user: {nickname: '迷弟', avatar: require("../assets/Danke_logo.png")}, content: '高大爷太强了'}]},
+                {user:{avatar: require("../assets/Danke_logo.png"), nickname: 'Gromah'}, content: '高大爷太强了', post_time: '114514秒前', good: 114514, comments: [{user: {nickname: '迷弟', avatar: require("../assets/Danke_logo.png")}, content: '高大爷太强了'}, {user: {nickname: '迷弟', avatar: require("../assets/Danke_logo.png")}, content: '高大爷太强了'}]},
+                {user:{avatar: require("../assets/Danke_logo.png"), nickname: 'Gromah'}, content: '高大爷太强了', post_time: '114514秒前', good: 114514, comments: [{user: {nickname: '迷弟', avatar: require("../assets/Danke_logo.png")}, content: '高大爷太强了'}, {user: {nickname: '迷弟', avatar: require("../assets/Danke_logo.png")}, content: '高大爷太强了'}]},
+                {user:{avatar: require("../assets/Danke_logo.png"), nickname: 'Gromah'}, content: '高大爷太强了', post_time: '114514秒前', good: 114514, comments: [{user: {nickname: '迷弟', avatar: require("../assets/Danke_logo.png")}, content: '高大爷太强了'}, {user: {nickname: '迷弟', avatar: require("../assets/Danke_logo.png")}, content: '高大爷太强了'}]}],
+      mainreply: '',
+      subreply: '',
+      subsubreply: ''
+    }
+  },
+  mounted() {
+    if(getCookie() == ""){
+      //TODO: 路由到登录页
+    }
+    const path = "http://127.0.0.1:8000/api/vi/auth/topics/"
+    axios.get(path+this.$route.params.topic_id, {
+      session_id: getCookie()
+    }).then(function(response) {
+      let data = response.data
+      this.tietitle = data.title
+      this.lzname = data.user.nickname
+      this.lzcontent = data.content
+      this.lztime = data.topic_time
+      this.area = data.supforums[0].title
+      this.dept = data.supforums[1].title
+      this.sub = data.supforums[2].title
+      this.replynum = data.count_posts
+      this.replies = data.posts
+    })
+  },
   methods: {
     handleCommand: function(command) {
       if(command == "changeProfile"){
@@ -201,30 +251,6 @@ export default {
   },
   props: {
     msg: String
-  },
-  data(){
-    return {
-      logourl: require("../assets/Danke_logo.png"),
-      username: 'Gromah',
-      login: true,
-      mainblock: '计算机科学技术学院',
-      subblock: '子版块',
-      tietitle: '这是帖子题目',
-      lzname: '无敌高大爷',
-      lzcontent: 'We love Gromah!We love Gromah!We love Gromah!We love Gromah!We love Gromah!We love Gromah!We love Gromah!We love Gromah!We love Gromah!We love Gromah!We love Gromah!We love Gromah!We love Gromah!We love Gromah!We love Gromah!We love Gromah!We love Gromah!We love Gromah!We love Gromah!We love Gromah!We love Gromah!We love Gromah!We love Gromah!We love Gromah!We love Gromah!We love Gromah!',
-      lztime: '114514秒前',
-      area: '课程评价',
-      dept: '计算机系',
-      sub: '子板块一',
-      replynum: 4,
-      replies: [{num: 1, logo: require("../assets/Danke_logo.png"), nickname: 'Gromah', content: '高大爷太强了', time: '114514秒前', good: 114514, reply: [{nickname: '迷弟', logo: require("../assets/Danke_logo.png"), content: '高大爷太强了'}, {nickname: '迷弟', logo: require("../assets/Danke_logo.png"), content: '高大爷太强了'}]},
-                {num: 2, logo: require("../assets/Danke_logo.png"), nickname: 'Gromah', content: '高大爷太强了', time: '114514秒前', good: 114514, reply: [{nickname: '迷弟', logo: require("../assets/Danke_logo.png"), content: '高大爷太强了'}, {nickname: '迷弟', logo: require("../assets/Danke_logo.png"), content: '高大爷太强了'}]},
-                {num: 3, logo: require("../assets/Danke_logo.png"), nickname: 'Gromah', content: '高大爷太强了', time: '114514秒前', good: 114514, reply: [{nickname: '迷弟', logo: require("../assets/Danke_logo.png"), content: '高大爷太强了'}, {nickname: '迷弟', logo: require("../assets/Danke_logo.png"), content: '高大爷太强了'}]},
-                {num: 4, logo: require("../assets/Danke_logo.png"), nickname: 'Gromah', content: '高大爷太强了', time: '114514秒前', good: 114514, reply: [{nickname: '迷弟', logo: require("../assets/Danke_logo.png"), content: '高大爷太强了'}, {nickname: '迷弟', logo: require("../assets/Danke_logo.png"), content: '高大爷太强了'}]}],
-      mainreply: '',
-      subreply: '',
-      subsubreply: ''
-    }
   }
 }
 </script>

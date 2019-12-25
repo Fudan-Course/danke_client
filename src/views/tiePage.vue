@@ -30,7 +30,7 @@
           <el-col :span="9" :offset="3" class="title">
             <el-breadcrumb separator-class="el-icon-arrow-right">
               <!-- 未给出路径 -->
-              <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+              <el-breadcrumb-item :to="{ path: '/MainPage' }">首页</el-breadcrumb-item>
               <el-breadcrumb-item>{{ area }}</el-breadcrumb-item>
               <el-breadcrumb-item>{{ dept }}</el-breadcrumb-item>
               <el-breadcrumb-item>{{ sub }}</el-breadcrumb-item>
@@ -40,13 +40,13 @@
 
         <el-row>
           <el-col :span="3" :offset="3" class="title">
-            子版块一
+            {{sub}}
           </el-col>
         </el-row>
 
         <el-row>
           <el-col :span="3" :offset="3" class="subtitle">
-            副标题
+            {{sub_title}}
           </el-col>
         </el-row>
 
@@ -56,31 +56,31 @@
           </el-col>
         </el-row>
 
-        <div v-for="department in zhiding">
+        <div v-for="department in zhiding" :key="department">
           <el-row>
             <el-card class="block">
               <el-row type="flex" align="middle">
                 <el-col :span="16">
                   <el-row style="text-align:left;">
                     <!-- 改成了文字链接跳转，在href处输入链接 -->
-                    <el-link :underline="false" href="这里是链接" class="subtitle">{{ department.name }}</el-link>
+                    <el-link :underline="false" class="subtitle" v-on:click="go_to_topic(department.id)">{{ department.title }}</el-link>
                   </el-row>
                   <el-row class="subsubtitle" style="text-align:left;">
-                    {{ department.subname }}
+                    {{ department.preview }}
                   </el-row>
                   <el-row class="num" style="text-align:left;">
-                    发帖人：{{ department.lz }}，回复数：{{ department.repnum }}，浏览数：{{ department.watchnum }}
+                    发帖人：{{ department.user.nickname }}，回复数：{{ department.count_posts }}，浏览数：{{ department.count_views }}
                   </el-row>
                 </el-col>
                 <el-col :span="8">
                   <el-row type="flex" align="middle" class="newestreply">
-                    {{ department.dongtai }}
+                    {{ department.last_reply_post_title }}
                   </el-row>
                   <el-row type="flex" align="middle" class="replymsg">
-                    摘要：{{ department.abstract }}
+                    摘要：{{ department.last_reply_post_preview }}
                   </el-row>
                   <el-row type="flex" align="middle" class="replymsg">
-                    回复者：{{ department.replyer }}
+                    回复者：{{ department.last_reply_user_nickname }}
                   </el-row>
                   <el-row type="flex" align="middle" class="replymsg">
                     回复时间：{{ department.time }}
@@ -110,31 +110,31 @@
           </el-col>
         </el-row>
 
-        <div v-for="department in tiezi">
+        <div v-for="department in tiezi" :key="department">
           <el-row>
             <el-card class="block">
               <el-row type="flex" align="middle">
                 <el-col :span="16">
                   <el-row style="text-align:left;">
                     <!-- 改成了文字链接跳转，在href处输入链接 -->
-                    <el-link :underline="false" href="这里是链接" class="subtitle">{{ department.name }}</el-link>
+                    <el-link :underline="false" class="subtitle" v-on:click="go_to_topic(department.id)">{{ department.title }}</el-link>
                   </el-row>
                   <el-row class="subsubtitle" style="text-align:left;">
-                    {{ department.subname }}
+                    {{ department.preview }}
                   </el-row>
                   <el-row class="num" style="text-align:left;">
-                    发帖人：{{ department.lz }}，回复数：{{ department.repnum }}，浏览数：{{ department.watchnum }}，
+                    发帖人：{{ department.user.nickname }}，回复数：{{ department.count_posts }}，浏览数：{{ department.count_views }}，
                   </el-row>
                 </el-col>
                 <el-col :span="8">
                   <el-row type="flex" align="middle" class="newestreply">
-                    {{ department.dongtai }}
+                    {{ department.last_reply_post_title }}
                   </el-row>
                   <el-row type="flex" align="middle" class="replymsg">
-                    摘要：{{ department.abstract }}
+                    摘要：{{ department.last_reply_post_preview }}
                   </el-row>
                   <el-row type="flex" align="middle" class="replymsg">
-                    回复者：{{ department.replyer }}
+                    回复者：{{ department.last_reply_user_nickname }}
                   </el-row>
                   <el-row type="flex" align="middle" class="replymsg">
                     回复时间：{{ department.time }}
@@ -152,9 +152,54 @@
 </template>
 
 <script>
+import { setCookie, getCookie, delCookie } from "../assets/js/cookie.js";
+import axios from 'axios';
 export default {
   name: 'TiePage',
+  data(){
+    return {
+      logourl: require("../assets/Danke_logo.png"),
+      username: 'Gromah',
+      login: true,
+      area: '课程评价',
+      dept: '计算机系',
+      sub: '子板块一',
+      sub_title: '副标题',
+      mainreply: '',
+      zhiding: [{id: 1, title: '置顶一', preview: '摘要', user: {nickname: 'Gromah'}, count_posts: 0, count_views: 0, last_reply_post_title: '新回复：XXXXX', last_reply_post_preview: '高大爷天下第一', last_reply_user_nickname: 'Gromah', last_reply_time: '114514秒前'},
+      {id: 2, title: '置顶二', preview: '摘要', user: {nickname: 'Gromah'}, count_posts: 0, count_views: 0, last_reply_post_title: '新回复：XXXXX', last_reply_post_preview: '高大爷天下第一', last_reply_user_nickname: 'Gromah', last_reply_time: '114514秒前'},
+      {id: 3, title: '置顶三', preview: '摘要', user: {nickname: 'Gromah'}, count_posts: 0, count_views: 0, last_reply_post_title: '新回复：XXXXX', last_reply_post_preview: '高大爷天下第一', last_reply_user_nickname: 'Gromah', last_reply_time: '114514秒前'}],
+      tiezi: [{id: 4, title: '帖子一', preview: '摘要', user: {nickname: 'Gromah'}, count_posts: 0, count_views: 0, last_reply_post_title: '新回复：XXXXX', last_reply_post_preview: '高大爷天下第一', last_reply_user_nickname: 'Gromah', last_reply_time: '114514秒前'},
+      {id: 5, title: '帖子二', preview: '摘要', user: {nickname: 'Gromah'}, count_posts: 0, count_views: 0, last_reply_post_title: '新回复：XXXXX', last_reply_post_preview: '高大爷天下第一', last_reply_user_nickname: 'Gromah', last_reply_time: '114514秒前'},
+      {id: 6, title: '帖子三', preview: '摘要', user: {nickname: 'Gromah'}, count_posts: 0, count_views: 0, last_reply_post_title: '新回复：XXXXX', last_reply_post_preview: '高大爷天下第一', last_reply_user_nickname: 'Gromah', last_reply_time: '114514秒前'}]
+    }
+  },
+  mounted() {
+    if(getCookie() == ""){
+      //TODO: 路由到登录页
+    }
+    const path = "http://127.0.0.1:8000/api/vi/auth/forums/"
+    axios.get(path+this.$route.params.forum_id, {
+      session_id: getCookie()
+    }).then(function(response) {
+      let data = response.data
+      this.area = data.supforums[0].title
+      this.dept = data.supforums[1].title
+      this.sub = data.title
+      this.sub_title = data.sub_title
+      
+      this.zhiding = data.top_topics
+      this.tiezi = data.topics
+      
+    })
+  },
   methods: {
+    go_to_topic: function(id){
+      this.$router.push({
+        name: 'TieZi',
+        params: {topic_id: id}
+      })
+    },
     handleCommand: function(command) {
       if(command == "changeProfile"){
         this.$message('跳转到个人资料页');
@@ -181,23 +226,6 @@ export default {
   },
   props: {
     msg: String
-  },
-  data(){
-    return {
-      logourl: require("../assets/Danke_logo.png"),
-      username: 'Gromah',
-      login: true,
-      area: '课程评价',
-      dept: '计算机系',
-      sub: '子板块一',
-      mainreply: '',
-      zhiding: [{name: '置顶一', subname: '摘要', lz: 'Gromah', repnum: 0, watchnum: 0, dongtai: '新回复：XXXXX', abstract: '高大爷天下第一', replyer: 'Gromah', time: '114514秒前'},
-      {name: '置顶二', subname: '摘要', lz: 'Gromah', repnum: 0, watchnum: 0, dongtai: '新回复：XXXXX', abstract: '高大爷天下第一', replyer: 'Gromah', time: '114514秒前'},
-      {name: '置顶三', subname: '摘要', lz: 'Gromah', repnum: 0, watchnum: 0, dongtai: '新回复：XXXXX', abstract: '高大爷天下第一', replyer: 'Gromah', time: '114514秒前'}],
-      tiezi: [{name: '帖子一', subname: '摘要', lz: 'Gromah', repnum: 0, watchnum: 0, dongtai: '新回复：XXXXX', abstract: '高大爷天下第一', replyer: 'Gromah', time: '114514秒前'},
-      {name: '帖子二', subname: '摘要', lz: 'Gromah', repnum: 0, watchnum: 0, dongtai: '新回复：XXXXX', abstract: '高大爷天下第一', replyer: 'Gromah', time: '114514秒前'},
-      {name: '帖子三', subname: '摘要', lz: 'Gromah', repnum: 0, watchnum: 0, dongtai: '新回复：XXXXX', abstract: '高大爷天下第一', replyer: 'Gromah', time: '114514秒前'}]
-    }
   }
 }
 </script>
