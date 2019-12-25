@@ -23,6 +23,6 @@ export function getCookie(c_name="session_id"){
 
 
 /*删除cookie*/
-export function delCookie(c_name){
+export function delCookie(c_name="session_id"){
   setCookie(c_name, "", -1, -1)
 }
