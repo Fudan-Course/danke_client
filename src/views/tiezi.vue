@@ -81,7 +81,7 @@
           <el-popover placement="bottom" width="500">
             <el-input type="textarea" :rows="5" placeholder="请输入回复" v-model="mainreply"></el-input>
             <!-- 未绑定回复事件 -->
-            <el-button type="info" size="mini" class="replybtn">发送回复</el-button>
+            <el-button type="info" size="mini" class="replybtn" v-on:click="start_new_post">发送回复</el-button>
             <el-button type="text" slot="reference">发布回复</el-button>
           </el-popover>
         </el-col>
@@ -122,7 +122,7 @@
                   <el-popover placement="bottom" width="500">
                     <el-input type="textarea" :rows="5" placeholder="请输入回复" v-model="subreply"></el-input>
                     <!-- 未绑定回复事件 -->
-                    <el-button type="info" size="mini" class="replybtn">发送回复</el-button>
+                    <el-button type="info" size="mini" class="replybtn" v-on:click="start_new_comment">发送回复</el-button>
                     <el-button type="text" slot="reference">回复</el-button>
                   </el-popover>
                 </el-col>
@@ -154,7 +154,8 @@
                         <el-popover placement="bottom" width="500">
                           <el-input type="textarea" :rows="5" placeholder="请输入回复" v-model="subsubreply"></el-input>
                           <!-- 未绑定回复事件 -->
-                          <el-button type="info" size="mini" class="replybtn">发送回复</el-button>
+                          <!-- TODO: 楼中楼 at -->
+                          <el-button type="info" size="mini" class="replybtn" v-on:click="start_new_post">发送回复</el-button>
                           <el-button type="text" size="small" slot="reference">回复</el-button>
                         </el-popover>
                       </el-col>
@@ -248,6 +249,12 @@ export default {
       // TODO:
       // 做好后删掉弹窗
     },
+    start_new_post: function(){
+      //TODO: axios 
+    },
+    start_new_comment: function(){
+      //TODO: axios
+    }
   },
   props: {
     msg: String

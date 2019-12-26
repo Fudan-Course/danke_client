@@ -102,9 +102,9 @@
           </el-col>
           <el-col :span="9" class="subtitle">
             <el-popover placement="bottom" width="500">
-              <el-input type="textarea" :rows="5" placeholder="请输入内容" v-model="mainreply"></el-input>
-              <!-- 未绑定回复事件 -->
-              <el-button type="info" size="mini" class="replybtn">发布帖子</el-button>
+              <el-input type="textarea" :rows="1" placeholder="请输入标题" v-model="newTopicTitle"></el-input>
+              <el-input type="textarea" :rows="5" placeholder="请输入内容" v-model="newTopicContent"></el-input>
+              <el-button type="info" size="mini" class="replybtn" v-on:click="start_new_post">发布帖子</el-button>
               <el-button type="text" slot="reference">发布帖子</el-button>
             </el-popover>
           </el-col>
@@ -148,6 +148,8 @@
         <el-pagination small layout="prev, pager, next" :page-size="6" :total="100" background="true" class="forumbox"></el-pagination>
       </div>
     </el-main>
+    
+
   </el-container>
 </template>
 
@@ -165,7 +167,8 @@ export default {
       dept: '计算机系',
       sub: '子板块一',
       sub_title: '副标题',
-      mainreply: '',
+      newTopicTitle: '',
+      newTopicContent: '',
       zhiding: [{id: 1, title: '置顶一', preview: '摘要', user: {nickname: 'Gromah'}, count_posts: 0, count_views: 0, last_reply_post_title: '新回复：XXXXX', last_reply_post_preview: '高大爷天下第一', last_reply_user_nickname: 'Gromah', last_reply_time: '114514秒前'},
       {id: 2, title: '置顶二', preview: '摘要', user: {nickname: 'Gromah'}, count_posts: 0, count_views: 0, last_reply_post_title: '新回复：XXXXX', last_reply_post_preview: '高大爷天下第一', last_reply_user_nickname: 'Gromah', last_reply_time: '114514秒前'},
       {id: 3, title: '置顶三', preview: '摘要', user: {nickname: 'Gromah'}, count_posts: 0, count_views: 0, last_reply_post_title: '新回复：XXXXX', last_reply_post_preview: '高大爷天下第一', last_reply_user_nickname: 'Gromah', last_reply_time: '114514秒前'}],
@@ -223,6 +226,9 @@ export default {
       // TODO:
       // 做好后删掉弹窗
     },
+    start_new_topic: function(){
+      //TODO: axios post
+    }
   },
   props: {
     msg: String
