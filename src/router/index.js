@@ -30,11 +30,6 @@ export default new Router({
       component: BlockPage
     },
     {
-      path: '/TiePage/:forum_id',
-      name: 'TiePage',
-      component: TiePage
-    },
-    {
       path: '/TieZi/:topic_id',
       name: 'TieZi',
       component: TieZi

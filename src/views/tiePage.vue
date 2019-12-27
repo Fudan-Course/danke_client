@@ -181,11 +181,11 @@ export default {
     if(getCookie() == ""){
       //TODO: 路由到登录页
     }
-    const path = "http://127.0.0.1:8000/api/vi/auth/forums/"
-    axios.get(path+this.$route.params.forum_id, {
+    const path = "http://127.0.0.1:8000/api/vi/auth/topics/"
+    axios.get(path+this.$route.params.forum_id+'/page', {
       session_id: getCookie()
-    }).then(function(response) {
-      let data = response.data
+    }).then((response) => {
+      let data = response.data.data
       this.area = data.supforums[0].title
       this.dept = data.supforums[1].title
       this.sub = data.title

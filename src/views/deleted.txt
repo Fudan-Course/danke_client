@@ -1,0 +1,49 @@
+mainpage homepage
+      <div align="center">
+        <el-row>
+          <el-col :span="3" :offset="3" class="title">
+            <!-- TODO: 父板块需要修改 -->
+            课程论坛
+          </el-col>
+        </el-row>
+
+        <div v-for="department in departments" :key="department">
+          <el-row>
+            <el-card class="block">
+              <el-row type="flex" align="middle">
+                <el-col :span="16">
+                  <el-row style="text-align:left;">
+                    <!-- 改成了文字链接跳转，在href处输入链接 -->
+                    <el-link :underline="false" class="subtitle" v-on:click="go_to_forum(department.id)">{{ department.title }}</el-link>
+                  </el-row>
+                  <el-row class="subsubtitle" style="text-align:left;">
+                    {{ department.subtitle }}
+                  </el-row>
+                  <el-row style="text-align:left;">
+                    <el-col :span="4" v-for="block in department.subblock" :key="block">
+                      <!-- TODO: 板块路由 -->
+                      <el-link :underline="false" class="subblock">{{ block }}</el-link>
+                    </el-col>
+                  </el-row>
+                </el-col>
+                <el-col :span="8">
+                  <el-row type="flex" align="middle" class="newestreply">
+                    {{ department.last_reply_topic_title }}
+                  </el-row>
+                  <el-row type="flex" align="middle" class="replymsg">
+                    摘要：{{ department.last_reply_preview }}
+                  </el-row>
+                  <el-row type="flex" align="middle" class="replymsg">
+                    回复者：{{ department.last_reply_user_nickname }}
+                  </el-row>
+                  <el-row type="flex" align="middle" class="replymsg">
+                    回复时间：{{ department.last_reply_time }}
+                  </el-row>
+                </el-col>
+              </el-row>
+            </el-card>
+          </el-row>
+        </div>
+
+        <el-pagination small layout="prev, pager, next" :page-size="3" :total="30" background="true" class="forumbox"></el-pagination>
+      </div>

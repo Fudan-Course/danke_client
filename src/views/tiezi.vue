@@ -30,10 +30,11 @@
         <el-col :span="9"  class="title">
           <el-breadcrumb separator-class="el-icon-arrow-right">
             <!-- 未给出路径 -->
-            <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+            <!-- <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
             <el-breadcrumb-item>{{ area }}</el-breadcrumb-item>
             <el-breadcrumb-item>{{ dept }}</el-breadcrumb-item>
-            <el-breadcrumb-item>{{ sub }}</el-breadcrumb-item>
+            <el-breadcrumb-item>{{ sub }}</el-breadcrumb-item> -->
+            <el-breadcrumb-item v-for="supforum in supforums" :key="supforum">{{ supforum.title}}</el-breadcrumb-item>
           </el-breadcrumb>
         </el-col>
       </el-row>
@@ -128,7 +129,7 @@
                 </el-col>
               </el-row>
               <el-divider>回复</el-divider>
-              <el-row class="cmt" style="height:50px;" v-for="cmt in reply.comments" :key="cmt">
+              <el-row class="cmt" style="height:50px;" v-for="cmt in reply.comment_list" :key="cmt">
                 <el-col :span="1">
                     <el-avatar :size="30" :src="cmt.logo"></el-avatar>
                 </el-col>
@@ -162,13 +163,13 @@
                     </el-row>
                 </el-col>
               </el-row>
-              <el-pagination small layout="prev, pager, next" :page-size="4" :total="5" background="true"></el-pagination>
+              <!-- <el-pagination small layout="prev, pager, next" :page-size="4" :total="1" background="true"></el-pagination> -->
             </el-col>
           </el-row>
         </el-card>
       </div>
 
-      <el-pagination small layout="prev, pager, next" :page-size="6" :total="100" background="true" class="forumbox"></el-pagination>
+      <!-- <el-pagination small layout="prev, pager, next" :page-size="6" :total="100" background="true" class="forumbox"></el-pagination> -->
 
 
     </el-main>
@@ -195,6 +196,7 @@ export default {
       dept: '计算机系',
       sub: '子板块一',
       replynum: 4,
+      data: undefined,
       // TODO: good点赞没有做
       replies: [{user:{avatar: require("../assets/Danke_logo.png"), nickname: 'Gromah'}, content: '高大爷太强了', post_time: '114514秒前', good: 114514, comments: [{user: {nickname: '迷弟', avatar: require("../assets/Danke_logo.png")}, content: '高大爷太强了'}, {user: {nickname: '迷弟', avatar: require("../assets/Danke_logo.png")}, content: '高大爷太强了'}]},
                 {user:{avatar: require("../assets/Danke_logo.png"), nickname: 'Gromah'}, content: '高大爷太强了', post_time: '114514秒前', good: 114514, comments: [{user: {nickname: '迷弟', avatar: require("../assets/Danke_logo.png")}, content: '高大爷太强了'}, {user: {nickname: '迷弟', avatar: require("../assets/Danke_logo.png")}, content: '高大爷太强了'}]},
@@ -206,37 +208,42 @@ export default {
     }
   },
   mounted() {
-    if(getCookie() == ""){
+    if(getCookie("user_id") == ""){
       //TODO: 路由到登录页
+      this.$router.push("/")
+    }else{
+      this.username = getCookie("user_id")
     }
-    const path = "http://127.0.0.1:8000/api/vi/auth/topics/"
-    axios.get(path+this.$route.params.topic_id, {
+    const path = "http://127.0.0.1:8000/api/v1/topics/"
+    axios.get(path+this.$route.params.topic_id+'/page', {
       session_id: getCookie()
-    }).then(function(response) {
-      let data = response.data
+    }).then((response) => {
+      let data = response.data.data
       this.tietitle = data.title
       this.lzname = data.user.nickname
       this.lzcontent = data.content
       this.lztime = data.topic_time
-      this.area = data.supforums[0].title
-      this.dept = data.supforums[1].title
-      this.sub = data.supforums[2].title
       this.replynum = data.count_posts
-      this.replies = data.posts
+      this.replies = data.post_list
+      this.supforums = data.supforums
+      this.data = data
+      console.log(data)
+    }).catch((error) => {
+      console.log("failed")
+      console.log(error)
     })
   },
   methods: {
     handleCommand: function(command) {
       if(command == "changeProfile"){
         this.$message('跳转到个人资料页');
-        // TODO:
-        // 做好后删掉弹窗
+        this.$router.push("/ProfilePage");
       }
       else if(command == "logout"){
         this.login = false;
         this.$message('退出登录');
-        // TODO:
-        // 做好后删掉弹窗
+        delCookie();
+        this.$router.push("/");
       }
       else{
         this.$message('什么事都没有发生');
@@ -251,6 +258,18 @@ export default {
     },
     start_new_post: function(){
       //TODO: axios 
+      const path = "http://127.0.0.1:8000/api/v1/topics/posts"
+      axios.post(path, {
+        session_id: getCookie(),
+        raw_content: this.start_new_post,
+        data_type: 0,
+        topic_id: this.data.id
+      }).then((response) => {
+        this.reload();
+      }).catch((error) => {
+        console.log("error")
+        console.log(error)
+      })
     },
     start_new_comment: function(){
       //TODO: axios

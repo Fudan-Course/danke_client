@@ -137,7 +137,8 @@ export default {
     };
   },
   mounted() {
-    if (getCookie()) {
+    if (getCookie("user_id")) {
+      console.log("response.data")
       this.$router.push("/MainPage");
     }
   },
@@ -151,38 +152,42 @@ export default {
           username_or_email: that.username,
           password: that.password
         })
-        .then(function(response) {
-          console.log(response);
+        .then((response) => {
+          
           let respcode = response.data.err_code;
           let resphint = response.data.message;
-          let respsession = response.data.session_id;
+          let respsession = response.data.data.session_id;
 
           that.tishi = resphint;
           if (respcode == 0) {
             that.showTishi = true;
-            setCookie("user_id", response.data.user_id, respsession, 1000 * 60);
-            const path_post_code = "http://127.0.0.1:8000/api/v1/auth/send_code";
-            axios
-              .post(path_post_code, {
-                session_id: respsession
-              })
-              .then(function(response) {
-                console.log(response);
-                if (response.data.err_code == 0) {
-                  dialogFormVisible = true;
-                } else {
-                  delCookie();
-                  that.$router.push("/")
-                }
-              });
-            dialogFormVisible = true;
-
-            setTimeout(
-              function() {
-                that.$router.push("/mainPage"); // Router to main page
-              }.bind(that),
-              1000
-            );
+            
+            setCookie("user_id", response.data.data.nickname, respsession, 1000 * 60);
+            
+            /* register会自动发送邮箱验证码，如果发送失败才对send_code请求让其再发送一遍 */
+            // const path_post_code = "http://127.0.0.1:8000/api/v1/auth/send_code";
+            // axios
+            //   .post(path_post_code, {
+            //     session_id: respsession
+            //   })
+            //   .then(function(response) {
+            //     console.log(response);
+            //     if (response.data.err_code == 0) {
+            //       dialogFormVisible = true;
+            //     } else {
+            //       delCookie();
+            //       that.$router.push("/")
+            //     }
+            //   });
+            // dialogFormVisible = true;
+            
+            that.$router.push("/MainPage"); 
+            // setTimeout(
+            //   function() {
+            //     that.$router.push("/MainPage"); // Router to main page
+            //   }.bind(that),
+            //   1000
+            // );
           } else if (respcode == 1) {
             that.username = "";
             that.password = "";
@@ -270,9 +275,10 @@ export default {
                 that.newNickname = "";
                 that.username = "";
                 that.password = "";
-                that.showRegister = false;
-                that.showLogin = true;
+                // that.showRegister = false;
+                // that.showLogin = true;
                 that.showTishi = false;
+                that.dialogFormVisible = true;
               }.bind(this),
               2000
             );
